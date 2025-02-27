@@ -25,8 +25,11 @@ A Flask-based web application for managing ebooks.
 ## folder structures
    
    ai_ebook_manager
+   
    ├── README.md
+   
    ├── app.py
+   
    ├── config.py
    ├── events.py
    ├── models.py
