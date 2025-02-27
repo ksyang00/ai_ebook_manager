@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h1>Ebook List</h1>
+
+<!-- Manage Users 버튼 추가 -->
+{% if session.get('user_id') %}
+    <a href="{{ url_for('upload') }}" class="button">Upload New Ebook</a>
+{% endif %}
+
+<table>
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Author</th>
+            <th>ISBN</th>
+            <th>Publish Date</th>
+            <th>File Size (Bytes)</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for ebook in ebooks %}
+        <tr>
+            <td>{{ ebook.Ebook.title }}</td>
+            <td>{{ ebook.Ebook.author }}</td>
+            <td>{{ ebook.Ebook.isbn }}</td>
+            <td>{{ ebook.Ebook.publish_date }}</td>
+            <td>{{ ebook.Ebook.file_data | length }}</td> <!-- 파일 크기 표시 -->
+            <td>
+                <a href="{{ url_for('detail', ebook_id=ebook.Ebook.id) }}" class="button">View</a>
+                <a href="{{ url_for('edit_ebook', ebook_id=ebook.Ebook.id) }}" class="button">Edit</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

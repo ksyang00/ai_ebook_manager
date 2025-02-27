@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Ebook Manager</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <header>
+        <h1>AI Ebook Manager</h1>
+        <nav>
+            <a href="{{ url_for('list_ebooks') }}">Home</a>
+            {% if session.get('user_id') == 1 %}
+                <a href="{{ url_for('manage_users') }}">Manage Users</a>
+                <a href="{{ url_for('list_all_ebooks') }}">Ebook All</a>
+                <a href="{{ url_for('view_logs')}}">Log View</a>
+            {% endif %}
+            {% if 'username' in session %}
+                <div class="user-info">
+                    Welcome, {{ session['username'] }}!
+                </div>
+            {% endif %}
+            <a href="{{ url_for('logout') }}">Logout</a>
+        </nav>
+
+    </header>
+
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>

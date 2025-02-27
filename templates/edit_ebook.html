@@ -1,0 +1,123 @@
+{% extends "layout.html" %}
+{% block content %}
+<h2>Edit Ebook</h2>
+<form method="post" id="edit-form">
+    <label for="title">Title:</label>
+    <input type="text" id="title" name="title" value="{{ ebook.title }}" required>
+    
+    <label for="author">Author:</label>
+    <input type="text" id="author" name="author" value="{{ ebook.author }}">
+    
+    <label for="isbn">ISBN:</label>
+    <input type="text" id="isbn" name="isbn" value="{{ ebook.isbn }}">
+    
+    <label for="publish_date">Publish Date:</label>
+    <input type="date" id="publish_date" name="publish_date" value="{{ ebook.publish_date.strftime('%Y-%m-%d') if ebook.publish_date else '' }}">
+    
+    <label for="summary">Summary:</label>
+    <textarea id="summary" name="summary" rows="5">{{ ebook.summary }}</textarea>
+    
+    <h3>Metadata</h3>
+    <div id="metadata-fields">
+        {% for meta in ebook.ebook_metadata %}
+        <div class="metadata-field">
+            <input type="text" name="meta_tag_{{ meta.id }}" value="{{ meta.tag }}" placeholder="Tag">
+            <input type="text" name="meta_value_{{ meta.id }}" value="{{ meta.value }}" placeholder="Value">
+            <button type="button" class="button delete" onclick="removeMetadataField(this)">Remove</button>
+        </div>
+        {% endfor %}
+    </div>
+    <button type="button" class="button" onclick="addMetadataField()">Add Metadata</button>
+    
+    <!-- Generate Detail Summary 버튼 -->
+    <button type="button" id="generate-summary">Generate Detail Summary</button>
+    
+    <button type="submit">Save Changes</button>
+</form>
+<a href="{{ url_for('list_ebooks') }}" class="button">Cancel</a>
+
+<!-- 진행 중 팝업 -->
+<div id="loading-popup" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border: 1px solid #ccc; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+    <p>Generating summary... This may take a while.</p>
+</div>
+
+<script>
+    function addMetadataField() {
+        const container = document.getElementById('metadata-fields');
+        const newField = document.createElement('div');
+        newField.classList.add('metadata-field');
+        newField.innerHTML = `
+            <input type="text" name="meta_tag_new[]" placeholder="Tag">
+            <input type="text" name="meta_value_new[]" placeholder="Value">
+            <button type="button" class="button delete" onclick="removeMetadataField(this)">Remove</button>
+        `;
+        container.appendChild(newField);
+    }
+
+    function removeMetadataField(button) {
+        button.parentElement.remove();
+    }
+
+    // Generate Detail Summary 버튼 클릭 시 요약 생성
+    document.getElementById('generate-summary').addEventListener('click', function() {
+        const ebookId = "{{ ebook.id }}";  // 현재 편집 중인 책의 ID
+
+        // 경고 메시지 표시
+        if (!confirm("Generating a summary may take a while. Do you want to continue?")) {
+            return;  // 사용자가 취소한 경우
+        }
+
+        // 진행 중 팝업 표시
+        const loadingPopup = document.getElementById('loading-popup');
+        loadingPopup.style.display = 'block';
+
+        // 서버에 요청하여 요약 생성
+        fetch('/generate_summary', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ ebook_id: ebookId }),  // ebook_id 전송
+        })
+        .then(response => response.json())
+        .then(data => {
+            // 진행 중 팝업 숨기기
+            loadingPopup.style.display = 'none';
+
+            if (data.success) {
+                document.getElementById('summary').value = data.summary;  // 요약을 텍스트 영역에 표시
+            } else {
+                alert("Failed to generate summary: " + data.message);
+            }
+        })
+        .catch(error => {
+            // 진행 중 팝업 숨기기
+            loadingPopup.style.display = 'none';
+            console.error('Error:', error);
+            alert("An error occurred while generating the summary.");
+        });
+    });
+
+    // 폼 제출 시 리스트 화면으로 이동
+    document.getElementById('edit-form').addEventListener('submit', function(event) {
+        event.preventDefault();  // 기본 폼 제출 동작 방지
+
+        // 폼 데이터를 서버로 전송
+        fetch("{{ url_for('edit_ebook', ebook_id=ebook.id) }}", {
+            method: 'POST',
+            body: new FormData(this),
+        })
+        .then(response => {
+            if (response.ok) {
+                window.location.href = "{{ url_for('list_ebooks') }}";  // 리스트 화면으로 이동
+            } else {
+                alert("Failed to save changes.");
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert("An error occurred while saving changes.");
+        });
+    });
+</script>
+{% endblock %}

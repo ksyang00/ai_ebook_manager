@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h1>Logs</h1>
+
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Table</th>
+            <th>Action</th>
+            <th>User ID</th>
+            <th>Timestamp</th>
+            <th>Details</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for log in logs %}
+        <tr>
+            <td>{{ log.id }}</td>
+            <td>{{ log.table_name }}</td>
+            <td>{{ log.action }}</td>
+            <td>{{ log.user_id }}</td>
+            <td>{{ log.timestamp }}</td>
+            <td>{{ log.details }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
