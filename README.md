@@ -23,34 +23,7 @@ A Flask-based web application for managing ebooks.
 
    
 ## folder structures
-   
-   ai_ebook_manager
-   
-   ├── README.md
-   
-   ├── app.py
-   
-   ├── config.py
-   ├── events.py
-   ├── models.py
-   ├── requirements.txt
-   ├── routes.py
-   ├── static
-   │   ├── scripts.js
-   │   └── styles.css
-   ├── templates
-   │   ├── delete_ebook.html
-   │   ├── delete_user.html
-   │   ├── detail.html
-   │   ├── ebook_all.html
-   │   ├── edit_ebook.html
-   │   ├── edit_user.html
-   │   ├── layout.html
-   │   ├── list.html
-   │   ├── login.html
-   │   ├── logs.html
-   │   ├── manage_users.html
-   │   ├── register.html
-   │   └── upload.html
-   └── utils.py
+
+   ![image](https://github.com/user-attachments/assets/2dbab505-7508-4a32-b49d-5e69afdce2ab)
+
 
